@@ -6,6 +6,7 @@
 import { useState, useEffect, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { storage } from '../lib/utils'
+import LoginFlipBook from '../components/auth/LoginFlipBook'
 
 /**
  * 登录页面组件
@@ -69,7 +70,7 @@ function LoginPage(): JSX.Element {
     <div className="min-h-screen bg-white animate-page-load">
       {/* 顶部导航栏 */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-8 lg:px-12 py-4">
           <div className="flex items-center justify-between">
             <div className="text-xl font-medium text-gray-900 tracking-tight hover:scale-105 transition-transform duration-300 cursor-pointer">
               Anagnosis
@@ -93,7 +94,7 @@ function LoginPage(): JSX.Element {
       </nav>
 
       {/* 主内容区域 */}
-      <main className="pt-20 min-h-screen pl-6 pr-6 relative overflow-hidden">
+      <main className="pt-24 min-h-screen relative overflow-hidden">
         {/* 简笔画松树背景装饰 */}
         <div className="absolute inset-0 -z-20 overflow-hidden">
           <svg width="100%" height="100%" viewBox="0 0 1200 800" className="text-gray-300">
@@ -160,194 +161,17 @@ function LoginPage(): JSX.Element {
             </g>
           </svg>
         </div>
-        
-        {/* 右侧巨大图书装饰 - 静态浅色背景 */}
-        <div 
-          className="fixed top-8 right-0 -z-10 pointer-events-none"
-          style={{
-            opacity: 0.08
-          }}
-        >
-          <svg
-            width="600"
-            height="700"
-            viewBox="0 0 600 700"
-            className="drop-shadow-sm"
+        <div className="absolute inset-y-0 right-0 w-[42vw] min-w-[360px] bg-gradient-to-l from-slate-100/70 via-stone-50/30 to-transparent -z-10 hidden lg:block"></div>
+
+        <div className="max-w-7xl mx-auto px-8 lg:px-12 py-10 lg:py-16 relative z-10">
+          <div
+            className="grid items-center gap-14 lg:grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)] min-h-[calc(100vh-8rem)]"
+            style={{
+              transform: `translateY(${scrollY * -0.03}px)`
+            }}
           >
-            <defs>
-              {/* 渐变定义 */}
-              <linearGradient id="bookSpineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#1e293b" stopOpacity="1" />
-                <stop offset="50%" stopColor="#334155" stopOpacity="0.8" />
-                <stop offset="100%" stopColor="#475569" stopOpacity="0.6" />
-              </linearGradient>
-              
-              <linearGradient id="leftPageGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#0f172a" stopOpacity="0.9" />
-                <stop offset="100%" stopColor="#1e293b" stopOpacity="0.7" />
-              </linearGradient>
-              
-              <linearGradient id="rightPageGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#1e293b" stopOpacity="0.7" />
-                <stop offset="100%" stopColor="#0f172a" stopOpacity="0.9" />
-              </linearGradient>
-              
-              <linearGradient id="coverGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#0f172a" stopOpacity="1" />
-                <stop offset="50%" stopColor="#1e293b" stopOpacity="0.8" />
-                <stop offset="100%" stopColor="#334155" stopOpacity="0.6" />
-              </linearGradient>
-            </defs>
-            
-            {/* 书本封面 */}
-            <rect
-              x="50"
-              y="50"
-              width="500"
-              height="600"
-              fill="url(#coverGradient)"
-              rx="8"
-              ry="8"
-            />
-            
-            {/* 书脊 */}
-            <rect
-              x="295"
-              y="50"
-              width="20"
-              height="600"
-              fill="url(#bookSpineGradient)"
-              rx="4"
-            />
-            
-            {/* 左侧页面 */}
-            <rect
-              x="70"
-              y="70"
-              width="220"
-              height="560"
-              fill="url(#leftPageGradient)"
-              rx="4"
-            />
-            
-            {/* 右侧页面 */}
-            <rect
-              x="320"
-              y="70"
-              width="220"
-              height="560"
-              fill="url(#rightPageGradient)"
-              rx="4"
-            />
-            
-            {/* 左页文字线条 */}
-            <g opacity="0.6">
-              <line x1="90" y1="120" x2="270" y2="120" stroke="#64748b" strokeWidth="2" />
-              <line x1="90" y1="150" x2="250" y2="150" stroke="#64748b" strokeWidth="2" />
-              <line x1="90" y1="180" x2="260" y2="180" stroke="#64748b" strokeWidth="2" />
-              <line x1="90" y1="210" x2="240" y2="210" stroke="#64748b" strokeWidth="2" />
-              <line x1="90" y1="240" x2="270" y2="240" stroke="#64748b" strokeWidth="2" />
-              <line x1="90" y1="270" x2="230" y2="270" stroke="#64748b" strokeWidth="2" />
-              <line x1="90" y1="300" x2="260" y2="300" stroke="#64748b" strokeWidth="2" />
-              <line x1="90" y1="330" x2="250" y2="330" stroke="#64748b" strokeWidth="2" />
-              <line x1="90" y1="360" x2="240" y2="360" stroke="#64748b" strokeWidth="2" />
-              <line x1="90" y1="390" x2="270" y2="390" stroke="#64748b" strokeWidth="2" />
-              <line x1="90" y1="420" x2="260" y2="420" stroke="#64748b" strokeWidth="2" />
-              <line x1="90" y1="450" x2="250" y2="450" stroke="#64748b" strokeWidth="2" />
-              <line x1="90" y1="480" x2="240" y2="480" stroke="#64748b" strokeWidth="2" />
-              <line x1="90" y1="510" x2="270" y2="510" stroke="#64748b" strokeWidth="2" />
-              <line x1="90" y1="540" x2="260" y2="540" stroke="#64748b" strokeWidth="2" />
-              <line x1="90" y1="570" x2="250" y2="570" stroke="#64748b" strokeWidth="2" />
-            </g>
-            
-            {/* 右页文字线条 */}
-            <g opacity="0.6">
-              <line x1="340" y1="120" x2="520" y2="120" stroke="#64748b" strokeWidth="2" />
-              <line x1="340" y1="150" x2="500" y2="150" stroke="#64748b" strokeWidth="2" />
-              <line x1="340" y1="180" x2="510" y2="180" stroke="#64748b" strokeWidth="2" />
-              <line x1="340" y1="210" x2="490" y2="210" stroke="#64748b" strokeWidth="2" />
-              <line x1="340" y1="240" x2="520" y2="240" stroke="#64748b" strokeWidth="2" />
-              <line x1="340" y1="270" x2="480" y2="270" stroke="#64748b" strokeWidth="2" />
-              <line x1="340" y1="300" x2="510" y2="300" stroke="#64748b" strokeWidth="2" />
-              <line x1="340" y1="330" x2="500" y2="330" stroke="#64748b" strokeWidth="2" />
-              <line x1="340" y1="360" x2="490" y2="360" stroke="#64748b" strokeWidth="2" />
-              <line x1="340" y1="390" x2="520" y2="390" stroke="#64748b" strokeWidth="2" />
-              <line x1="340" y1="420" x2="510" y2="420" stroke="#64748b" strokeWidth="2" />
-              <line x1="340" y1="450" x2="500" y2="450" stroke="#64748b" strokeWidth="2" />
-              <line x1="340" y1="480" x2="490" y2="480" stroke="#64748b" strokeWidth="2" />
-              <line x1="340" y1="510" x2="520" y2="510" stroke="#64748b" strokeWidth="2" />
-              <line x1="340" y1="540" x2="510" y2="540" stroke="#64748b" strokeWidth="2" />
-              <line x1="340" y1="570" x2="500" y2="570" stroke="#64748b" strokeWidth="2" />
-            </g>
-            
-            {/* 书本边框 */}
-            <rect
-              x="50"
-              y="50"
-              width="500"
-              height="600"
-              fill="none"
-              stroke="#475569"
-              strokeWidth="3"
-              rx="8"
-              ry="8"
-            />
-            
-            {/* 页面分隔线 */}
-            <line x1="305" y1="50" x2="305" y2="650" stroke="#64748b" strokeWidth="2" opacity="0.8" />
-            
-            {/* 高光效果 */}
-            <rect
-              x="55"
-              y="55"
-              width="15"
-              height="590"
-              fill="#f8fafc"
-              opacity="0.3"
-              rx="2"
-            />
-            <rect
-              x="525"
-              y="55"
-              width="15"
-              height="590"
-              fill="#f8fafc"
-              opacity="0.2"
-              rx="2"
-            />
-          </svg>
-        </div>
-        
-        {/* 左侧装饰性几何图形 */}
-        <div 
-          className="absolute top-40 -left-8 hidden md:block transition-transform duration-700 ease-out cursor-pointer group hover:scale-125"
-          style={{
-            transform: `translateY(${scrollY * -0.15}px)`,
-            opacity: Math.max(0.05, 0.1 - scrollY * 0.00008)
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform += ' rotate(180deg)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = e.currentTarget.style.transform.replace(' rotate(180deg)', '');
-          }}
-        >
-          <svg width="100" height="200" viewBox="0 0 100 200" className="opacity-5 group-hover:opacity-15 transition-all duration-500">
-            <circle cx="20" cy="50" r="3" fill="#6b7280" className="animate-pulse group-hover:fill-blue-400 group-hover:animate-none transition-all duration-500"/>
-            <circle cx="30" cy="80" r="2" fill="#9ca3af" className="animate-pulse group-hover:fill-blue-500 group-hover:animate-none transition-all duration-500" style={{animationDelay: '1s'}}/>
-            <circle cx="15" cy="120" r="4" fill="#6b7280" className="animate-pulse group-hover:fill-blue-400 group-hover:animate-none transition-all duration-500" style={{animationDelay: '2s'}}/>
-            <circle cx="25" cy="160" r="2.5" fill="#9ca3af" className="animate-pulse group-hover:fill-blue-500 group-hover:animate-none transition-all duration-500" style={{animationDelay: '3s'}}/>
-          </svg>
-        </div>
-        
-        <div 
-          className="max-w-none relative z-10 transition-transform duration-500 ease-out"
-          style={{
-            transform: `translateY(${scrollY * -0.05}px)`
-          }}
-        >
-          {/* 标题区域 - 真正的左对齐 */}
-          <div className="mb-16">
+            <div className="relative z-20 max-w-2xl pr-0 lg:pr-8">
+              <div className="mb-14">
             <h1 
               className={`text-4xl md:text-5xl lg:text-6xl font-light text-gray-800 leading-tight mb-2 tracking-tight transition-all duration-1000 ${
                 isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
@@ -381,95 +205,105 @@ function LoginPage(): JSX.Element {
                 opacity: Math.max(0.4, 1 - scrollY * 0.0008)
               }}
             >
-              A thoughtfully designed reading platform that transforms how you discover, organize, and engage with digital content.
-            </p>
-          </div>
-        
-          {/* 登录表单区域 - 去掉框线，更灵活的展示 */}
-          <div 
-            className={`max-w-md transition-all duration-1000 delay-700 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-            style={{
-              transform: `translateY(${scrollY * -0.06}px)`,
-              opacity: Math.max(0.5, 1 - scrollY * 0.0006)
-            }}
-          >
-            <div className="mb-8">
-              <h3 className="text-3xl font-light text-gray-900 mb-2 border-b border-gray-200 pb-4">
-                Get Started
-              </h3>
-              <p className="text-gray-500 text-lg font-light">Enter your invite code to continue</p>
-            </div>
-              
-            <form onSubmit={handleSubmit} className="space-y-8">
-              <div className="space-y-2 group">
-                <label htmlFor="invite-code" className="block text-lg font-light text-gray-600 transition-all duration-300 group-focus-within:text-gray-900 group-focus-within:scale-105 origin-left">
-                  Invite Code
-                </label>
-                <div className="relative">
-                  <input
-                    id="invite-code"
-                    name="inviteCode"
-                    type="text"
-                    required
-                    className="w-full px-0 py-3 border-0 border-b-2 border-gray-200 bg-transparent focus:ring-0 focus:border-gray-900 transition-all duration-500 text-lg placeholder-gray-400 font-light hover:border-gray-400 focus:scale-105 origin-left"
-                    placeholder="Enter your invite code"
-                    value={inviteCode}
-                    onChange={(e) => setInviteCode(e.target.value)}
-                    disabled={isLoading}
-                  />
-                  {/* 输入框装饰性光效 */}
-                  <div className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 transition-all duration-500 opacity-0 focus-within:opacity-100 scale-x-0 focus-within:scale-x-100 origin-left"></div>
-                </div>
+                A thoughtfully designed reading platform that transforms how you discover, organize, and engage with digital content.
+              </p>
               </div>
-              
-              {error && (
-                <div className="text-red-500 text-sm font-light animate-fade-in bg-red-50 py-3 px-4 rounded-lg border-l-4 border-red-400">
-                  {error}
-                </div>
-              )}
-              
-              <button
-                type="submit"
-                disabled={isLoading || !inviteCode.trim()}
-                className="inline-flex items-center px-8 py-3 text-lg font-light text-gray-900 border-2 border-gray-900 hover:bg-gray-900 hover:text-white disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed transition-all duration-300 group relative overflow-hidden hover:scale-105 hover:shadow-lg active:scale-95"
-                onMouseEnter={(e) => {
-                  if (!isLoading && inviteCode.trim()) {
-                    const ripple = document.createElement('span');
-                    ripple.className = 'absolute inset-0 bg-white/20 rounded-full scale-0 animate-ping';
-                    e.currentTarget.appendChild(ripple);
-                    setTimeout(() => ripple.remove(), 600);
-                  }
+        
+              <div 
+                className={`max-w-md transition-all duration-1000 delay-700 ${
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                }`}
+                style={{
+                  transform: `translateY(${scrollY * -0.04}px)`,
+                  opacity: Math.max(0.5, 1 - scrollY * 0.0006)
                 }}
               >
-                {/* 按钮背景动画 */}
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="relative z-10 flex items-center">
-                  {isLoading ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      <span className="animate-pulse">Verifying...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="transition-all duration-300 group-hover:tracking-wide">Continue</span>
-                      <svg className="ml-2 h-4 w-4 transition-all duration-300 group-hover:translate-x-1 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </>
-                  )}
+                <div className="mb-8">
+                  <h3 className="text-3xl font-light text-gray-900 mb-2 border-b border-gray-200 pb-4">
+                    Get Started
+                  </h3>
+                  <p className="text-gray-500 text-lg font-light">Enter your invite code to continue</p>
                 </div>
-              </button>
-            </form>
-            
-            <div className="mt-8">
-              <p className="text-sm text-gray-400 font-light">
-                Need an invite code? <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors underline">Contact us</a>
-              </p>
+              
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  <div className="space-y-2 group">
+                    <label htmlFor="invite-code" className="block text-lg font-light text-gray-600 transition-all duration-300 group-focus-within:text-gray-900 group-focus-within:scale-105 origin-left">
+                      Invite Code
+                    </label>
+                    <div className="relative">
+                      <input
+                        id="invite-code"
+                        name="inviteCode"
+                        type="text"
+                        required
+                        className="w-full px-0 py-3 border-0 border-b-2 border-gray-200 bg-transparent focus:ring-0 focus:border-gray-900 transition-all duration-500 text-lg placeholder-gray-400 font-light hover:border-gray-400 focus:scale-105 origin-left"
+                        placeholder="Enter your invite code"
+                        value={inviteCode}
+                        onChange={(e) => setInviteCode(e.target.value)}
+                        disabled={isLoading}
+                      />
+                      <div className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-slate-500 via-stone-400 to-slate-300 transition-all duration-500 opacity-0 focus-within:opacity-100 scale-x-0 focus-within:scale-x-100 origin-left"></div>
+                    </div>
+                  </div>
+
+                  {error && (
+                    <div className="text-red-500 text-sm font-light animate-fade-in bg-red-50 py-3 px-4 rounded-lg border-l-4 border-red-400">
+                      {error}
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={isLoading || !inviteCode.trim()}
+                    className="inline-flex items-center px-8 py-3 text-lg font-light text-gray-900 border-2 border-gray-900 hover:bg-gray-900 hover:text-white disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed transition-all duration-300 group relative overflow-hidden hover:scale-105 hover:shadow-lg active:scale-95"
+                    onMouseEnter={(e) => {
+                      if (!isLoading && inviteCode.trim()) {
+                        const ripple = document.createElement('span');
+                        ripple.className = 'absolute inset-0 bg-white/20 rounded-full scale-0 animate-ping';
+                        e.currentTarget.appendChild(ripple);
+                        setTimeout(() => ripple.remove(), 600);
+                      }
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="relative z-10 flex items-center">
+                      {isLoading ? (
+                        <>
+                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          <span className="animate-pulse">Verifying...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="transition-all duration-300 group-hover:tracking-wide">Continue</span>
+                          <svg className="ml-2 h-4 w-4 transition-all duration-300 group-hover:translate-x-1 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </>
+                      )}
+                    </div>
+                  </button>
+                </form>
+
+                <div className="mt-8">
+                  <p className="text-sm text-gray-400 font-light">
+                    Need an invite code? <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors underline">Contact us</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div
+              className={`relative z-10 hidden lg:flex justify-end transition-all duration-1000 delay-300 ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              }`}
+              style={{
+                transform: `translateY(${scrollY * -0.02}px)`
+              }}
+            >
+              <LoginFlipBook />
             </div>
           </div>
         </div>
