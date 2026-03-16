@@ -67,12 +67,12 @@ function BookshelfPage(): JSX.Element {
 
   // 渲染书籍卡片
   const renderBookCard = (book: Book) => (
-    <div key={book.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
-      <div className="flex items-start justify-between mb-4">
+    <div key={book.id} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md sm:p-6">
+      <div className="mb-4 flex items-start justify-between gap-3">
         <div className="flex-1">
           <h3 className="text-lg font-medium text-gray-900 mb-1 line-clamp-2">{book.title}</h3>
           <p className="text-sm text-gray-600 mb-2">{book.author}</p>
-          <div className="flex items-center gap-4 text-xs text-gray-500">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500 sm:gap-4">
             <span className="px-2 py-1 bg-gray-100 rounded-full">{book.format.toUpperCase()}</span>
             <span>{formatFileSize(book.fileSize)}</span>
             <span>{formatDate(book.addedAt)}</span>
@@ -93,13 +93,13 @@ function BookshelfPage(): JSX.Element {
       {book.description && (
         <p className="text-sm text-gray-600 line-clamp-3 mb-4">{book.description}</p>
       )}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-xs text-gray-500">
           {book.totalPages || 0} 页
         </div>
         <button 
           onClick={() => window.location.href = `/reader/${book.id}`}
-          className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800 transition-colors"
+          className="w-full rounded-md bg-gray-900 px-4 py-2 text-sm text-white transition-colors hover:bg-gray-800 sm:w-auto"
         >
           开始阅读
         </button>
@@ -107,44 +107,44 @@ function BookshelfPage(): JSX.Element {
     </div>
   )
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden">
+    <div className="relative min-h-full bg-white overflow-hidden">
       {/* 背景装饰元素 */}
       <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full opacity-60 animate-float"></div>
       <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-br from-pink-100 to-yellow-100 rounded-full opacity-50 animate-float" style={{animationDelay: '1s'}}></div>
       <div className="absolute bottom-32 left-1/4 w-20 h-20 bg-gradient-to-br from-green-100 to-blue-100 rounded-full opacity-40 animate-float" style={{animationDelay: '2s'}}></div>
       
-      <div className="relative z-10 p-8">
-        <div className="max-w-4xl mx-auto">
+      <div className="relative z-10 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <div className="mx-auto max-w-6xl">
           {/* 页面标题 */}
-          <div className="text-center mb-12">
-            <h1 className="text-5xl font-light text-gray-900 mb-4 tracking-tight animate-fade-in">
+          <div className="mb-8 text-center sm:mb-10 lg:mb-12">
+            <h1 className="mb-4 animate-fade-in text-[clamp(2.25rem,6vw,3.75rem)] font-light tracking-tight text-gray-900">
               我的书架
             </h1>
             <div className="w-24 h-0.5 bg-gray-300 mx-auto mb-6"></div>
-            <p className="text-lg text-gray-600 font-light" style={{fontFamily: 'SimSun, serif'}}>管理您的电子书籍收藏</p>
+            <p className="px-4 text-sm font-light text-gray-600 sm:text-base lg:text-lg" style={{fontFamily: 'SimSun, serif'}}>管理您的电子书籍收藏</p>
           </div>
 
           {/* 搜索和筛选栏 */}
-          <div className="mb-8 flex flex-col sm:flex-row gap-4 items-center justify-between">
-            <div className="flex-1 max-w-md">
+          <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-gray-200/80 bg-white/80 p-4 shadow-sm backdrop-blur sm:p-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="w-full flex-1 lg:max-w-xl">
               <div className="relative">
                 <input
                   type="text"
                   placeholder="搜索书名或作者..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-200 focus:border-gray-400 outline-none transition-colors"
+                  className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 outline-none transition-colors focus:border-gray-400 focus:ring-2 focus:ring-gray-200"
                 />
                 <svg className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto lg:items-center">
               <select
                 value={selectedFormat}
                 onChange={(e) => setSelectedFormat(e.target.value as 'all' | 'epub' | 'txt')}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-200 focus:border-gray-400 outline-none"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-200 sm:w-auto"
               >
                 <option value="all">所有格式</option>
                 <option value="epub">EPUB</option>
@@ -152,7 +152,7 @@ function BookshelfPage(): JSX.Element {
               </select>
               <button
                 onClick={() => setShowUploadModal(true)}
-                className="px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gray-900 px-6 py-2.5 text-white transition-colors hover:bg-gray-800 sm:w-auto"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -172,7 +172,7 @@ function BookshelfPage(): JSX.Element {
 
           {/* 书籍列表 */}
           {!loading && filteredBooks.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
               {filteredBooks.map(renderBookCard)}
             </div>
           )}

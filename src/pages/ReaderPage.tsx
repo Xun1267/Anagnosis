@@ -42,6 +42,12 @@ function ReaderPage(): JSX.Element {
 
   // 计算当前章节
   const currentChapter = chapters[currentChapterIndex]
+  const currentParagraphs = currentChapter
+    ? currentChapter.content
+        .split(/\n{2,}/)
+        .map((paragraph) => paragraph.trim())
+        .filter(Boolean)
+    : []
 
   // 加载书籍和章节数据
   useEffect(() => {
@@ -285,7 +291,7 @@ function ReaderPage(): JSX.Element {
               >
                 <div 
                   data-text-content
-                  className={`leading-relaxed whitespace-pre-wrap ${
+                  className={`leading-relaxed ${
                     settings.reading.theme === 'dark' ? 'text-gray-100' :
                     settings.reading.theme === 'sepia' ? 'text-amber-900' :
                     'text-gray-800'
@@ -299,7 +305,22 @@ function ReaderPage(): JSX.Element {
                                    'transparent'
                   }}
                 >
-                  {currentChapter.content}
+                  {currentParagraphs.map((paragraph, index) => {
+                    const isShortHeading = paragraph.length <= 40 && /^(第.+[章节回部卷篇集]|序章|楔子|前言|引言|后记|尾声|番外|Chapter\s+\d+)/i.test(paragraph)
+
+                    return (
+                      <p
+                        key={`${currentChapter.id}-paragraph-${index}`}
+                        className={
+                          isShortHeading
+                            ? 'mb-6 mt-8 text-xl font-medium tracking-wide'
+                            : 'mb-6 text-justify indent-8 last:mb-0'
+                        }
+                      >
+                        {paragraph}
+                      </p>
+                    )
+                  })}
                 </div>
               </NoteHighlightContainer>
             </div>

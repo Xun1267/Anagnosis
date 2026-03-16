@@ -9,6 +9,18 @@ import { BookStatus } from '../../types'
 
 export class EPUBParser implements FileParser {
   private onProgress?: (progress: ParseProgress) => void
+  private static readonly BLOCK_SELECTORS = [
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'p',
+    'blockquote',
+    'pre',
+    'li'
+  ].join(', ')
 
   /**
    * 解析EPUB文件
@@ -119,8 +131,8 @@ export class EPUBParser implements FileParser {
         let title = `第 ${i + 1} 章`
         
         if (doc && (doc.body || doc.documentElement)) {
-          content = this.extractTextFromDocument(doc)
           title = this.extractChapterTitle(doc, i + 1)
+          content = this.extractTextFromDocument(doc, title)
         } else {
           // 如果无法获取Document，尝试直接获取文本内容
           const htmlContent = await section.render()
@@ -128,8 +140,8 @@ export class EPUBParser implements FileParser {
             // 创建临时DOM来解析HTML
             const parser = new DOMParser()
             const tempDoc = parser.parseFromString(htmlContent, 'text/html')
-            content = this.extractTextFromDocument(tempDoc)
             title = this.extractChapterTitle(tempDoc, i + 1)
+            content = this.extractTextFromDocument(tempDoc, title)
           }
         }
         
@@ -168,33 +180,73 @@ export class EPUBParser implements FileParser {
   /**
    * 从文档中提取纯文本
    */
-  private extractTextFromDocument(doc: Document): string {
+  private extractTextFromDocument(doc: Document, chapterTitle?: string): string {
     try {
-      // 添加更严格的检查
       if (!doc) {
         return ''
       }
 
-      // 移除script和style标签
-      const scripts = doc.querySelectorAll('script, style')
-      scripts.forEach(el => el.remove())
-
-      // 提取文本内容
       const body = doc.body || doc.documentElement
       if (!body) {
         return ''
       }
-      
-      let text = body.textContent || body.innerText || ''
-      
-      // 清理文本：移除多余空白字符
-      text = text.replace(/\s+/g, ' ').trim()
-      
-      return text
+
+      const clone = body.cloneNode(true) as HTMLElement
+      clone.querySelectorAll('script, style, noscript, svg, img').forEach((el) => el.remove())
+      clone.querySelectorAll('br').forEach((br) => br.replaceWith('\n'))
+
+      const contentBlocks = this.extractContentBlocks(clone)
+      const normalizedBlocks = contentBlocks
+        .map((block) => this.normalizeBlockText(block))
+        .filter(Boolean)
+
+      const dedupedBlocks =
+        chapterTitle && normalizedBlocks[0] === this.normalizeBlockText(chapterTitle)
+          ? normalizedBlocks.slice(1)
+          : normalizedBlocks
+
+      if (dedupedBlocks.length > 0) {
+        return dedupedBlocks.join('\n\n')
+      }
+
+      return this.normalizeBlockText(clone.textContent || clone.innerText || '')
     } catch (error) {
       console.warn('提取文档文本时出错:', error)
       return ''
     }
+  }
+
+  private extractContentBlocks(container: HTMLElement): string[] {
+    const semanticBlocks = Array.from(container.querySelectorAll<HTMLElement>(EPUBParser.BLOCK_SELECTORS))
+      .map((element) => {
+        const text = element.textContent || element.innerText || ''
+        const normalized = this.normalizeBlockText(
+          element.tagName.toLowerCase() === 'li' ? `• ${text}` : text
+        )
+        return normalized
+      })
+      .filter(Boolean)
+
+    if (semanticBlocks.length > 0) {
+      return semanticBlocks
+    }
+
+    const fallbackBlocks = Array.from(container.querySelectorAll<HTMLElement>('div, section, article'))
+      .filter((element) => !element.querySelector(EPUBParser.BLOCK_SELECTORS))
+      .map((element) => this.normalizeBlockText(element.textContent || element.innerText || ''))
+      .filter(Boolean)
+
+    return fallbackBlocks
+  }
+
+  private normalizeBlockText(text: string): string {
+    return text
+      .replace(/\r\n/g, '\n')
+      .replace(/\u00a0/g, ' ')
+      .replace(/[ \t]+\n/g, '\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .replace(/[ \t]{2,}/g, ' ')
+      .trim()
   }
 
   /**

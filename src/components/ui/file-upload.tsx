@@ -216,7 +216,7 @@ export const FileUpload = React.forwardRef<FileUploadRef, FileUploadProps>(
         {/* 拖拽上传区域 */}
         <div
           className={cn(
-            'relative border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer',
+            'relative cursor-pointer rounded-lg border-2 border-dashed p-5 text-center transition-colors sm:p-8',
             isDragOver
               ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20'
               : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500',
@@ -244,7 +244,7 @@ export const FileUpload = React.forwardRef<FileUploadRef, FileUploadProps>(
             )} />
             
             <div className="space-y-2">
-              <p className="text-lg font-medium text-gray-900 dark:text-gray-100">
+              <p className="text-base font-medium text-gray-900 dark:text-gray-100 sm:text-lg">
                 {isDragOver ? '释放文件以上传' : '拖拽文件到此处或点击选择'}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -278,17 +278,17 @@ export const FileUpload = React.forwardRef<FileUploadRef, FileUploadProps>(
                 return (
                   <div
                     key={uploadFile.id}
-                    className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
+                    className="flex flex-col gap-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-800 sm:flex-row sm:items-start"
                   >
                     {/* 文件图标 */}
-                    <div className="flex-shrink-0">
+                    <div className="flex flex-shrink-0 items-center">
                       {getFileIcon()}
                     </div>
                     
                     {/* 文件信息 */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-2">
-                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                      <div className="flex items-start gap-2">
+                        <p className="break-all text-sm font-medium text-gray-900 dark:text-gray-100">
                           {uploadFile.file.name}
                         </p>
                         <div className="flex-shrink-0">
@@ -296,13 +296,13 @@ export const FileUpload = React.forwardRef<FileUploadRef, FileUploadProps>(
                         </div>
                       </div>
                       
-                      <div className="flex items-center space-x-4 mt-1">
+                      <div className="mt-1 flex flex-wrap items-center gap-3">
                         <p className="text-xs text-gray-500 dark:text-gray-400">
                           {fileInfo.sizeFormatted} • {fileInfo.format.toUpperCase()}
                         </p>
                         
                         {uploadFile.status === 'uploading' && (
-                          <div className="flex-1 max-w-xs">
+                          <div className="w-full sm:max-w-xs">
                             <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                               <div
                                 className="bg-blue-500 h-1.5 rounded-full transition-all duration-300"
@@ -326,7 +326,7 @@ export const FileUpload = React.forwardRef<FileUploadRef, FileUploadProps>(
                         e.stopPropagation()
                         removeFile(uploadFile.id)
                       }}
-                      className="flex-shrink-0 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 rounded"
+                      className="self-end rounded p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 sm:self-start"
                     >
                       <X className="h-4 w-4" />
                     </button>

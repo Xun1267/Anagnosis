@@ -206,7 +206,7 @@ export const FileUploadModal: React.FC<FileUploadModalProps> = ({
     <Dialog.Root open={open} onOpenChange={handleClose}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-        <Dialog.Content className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-2xl translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg">
+        <Dialog.Content className="fixed left-[50%] top-[50%] z-50 flex max-h-[calc(100vh-1.5rem)] w-[calc(100vw-1.5rem)] max-w-2xl translate-x-[-50%] translate-y-[-50%] flex-col gap-4 overflow-hidden rounded-2xl border bg-background p-4 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:max-h-[calc(100vh-3rem)] sm:w-[calc(100vw-3rem)] sm:p-6">
           {/* 标题栏 */}
           <div className="flex items-center justify-between">
             <Dialog.Title className="text-lg font-semibold">
@@ -222,7 +222,7 @@ export const FileUploadModal: React.FC<FileUploadModalProps> = ({
           </div>
 
           {/* 内容区域 */}
-          <div className="space-y-6">
+          <div className="flex-1 space-y-6 overflow-y-auto pr-1">
             {/* 上传状态显示 */}
             {uploadState.status !== 'idle' && (
               <div className="space-y-4">
@@ -317,12 +317,12 @@ export const FileUploadModal: React.FC<FileUploadModalProps> = ({
           </div>
 
           {/* 操作按钮 */}
-          <div className="flex justify-end space-x-3">
+          <div className="flex flex-wrap justify-end gap-3 border-t border-gray-100 pt-4">
             {uploadState.status === 'idle' && (
               <>
                 <button
                   onClick={handleClose}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
+                  className="w-full px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 sm:w-auto"
                 >
                   取消
                 </button>
@@ -330,7 +330,7 @@ export const FileUploadModal: React.FC<FileUploadModalProps> = ({
                   onClick={handleUpload}
                   disabled={selectedFiles.length === 0}
                   className={cn(
-                    'px-4 py-2 text-sm font-medium text-white rounded-md transition-colors',
+                    'w-full rounded-md px-4 py-2 text-sm font-medium text-white transition-colors sm:w-auto',
                     selectedFiles.length > 0
                       ? 'bg-blue-600 hover:bg-blue-700'
                       : 'bg-gray-400 cursor-not-allowed'
@@ -345,7 +345,7 @@ export const FileUploadModal: React.FC<FileUploadModalProps> = ({
             {uploadState.status === 'uploading' && (
               <button
                 disabled
-                className="px-4 py-2 text-sm font-medium text-gray-500 bg-gray-200 dark:bg-gray-700 rounded-md cursor-not-allowed"
+                className="w-full cursor-not-allowed rounded-md bg-gray-200 px-4 py-2 text-sm font-medium text-gray-500 dark:bg-gray-700 sm:w-auto"
               >
                 导入中...
               </button>
@@ -355,13 +355,13 @@ export const FileUploadModal: React.FC<FileUploadModalProps> = ({
               <>
                 <button
                   onClick={handleContinue}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
+                  className="w-full px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 sm:w-auto"
                 >
                   继续添加
                 </button>
                 <button
                   onClick={handleClose}
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md"
+                  className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 sm:w-auto"
                 >
                   完成
                 </button>

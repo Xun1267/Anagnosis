@@ -50,7 +50,7 @@ export class TXTParser implements FileParser {
       reader.onload = (event) => {
         const content = event.target?.result as string
         if (content) {
-          resolve(content)
+          resolve(this.normalizeSourceText(content))
         } else {
           reject(new Error('文件内容为空'))
         }
@@ -176,20 +176,23 @@ export class TXTParser implements FileParser {
    */
   private splitIntoChapters(content: string): Omit<Chapter, 'id' | 'bookId'>[] {
     const chapters: Omit<Chapter, 'id' | 'bookId'>[] = []
+    const normalizedContent = this.normalizeSourceText(content)
     
     // 章节分割模式
     const chapterPatterns = [
-      /^\s*第[一二三四五六七八九十百千万\d]+[章节回部]/m,
+      /^\s*第[零一二三四五六七八九十百千万两\d]+[章节回部卷篇集]\s*[^\n]{0,40}$/m,
+      /^\s*(序章|楔子|前言|引言|后记|尾声|番外)\s*[^\n]{0,40}$/m,
       /^\s*Chapter\s+\d+/im,
-      /^\s*[第]?\d+[章节回部]/m,
-      /^\s*[一二三四五六七八九十百千万]+[、\s]/m
+      /^\s*(Prologue|Epilogue|Preface)\s*[^\n]{0,40}$/im,
+      /^\s*[第]?\d+[章节回部卷篇集]\s*[^\n]{0,40}$/m,
+      /^\s*[一二三四五六七八九十百千万]+[、.]\s*[^\n]{0,40}$/m
     ]
     
     let chapterSplits: { index: number; title: string }[] = []
     
     // 尝试不同的分割模式
     for (const pattern of chapterPatterns) {
-      const matches = Array.from(content.matchAll(new RegExp(pattern.source, pattern.flags + 'g')))
+      const matches = Array.from(normalizedContent.matchAll(new RegExp(pattern.source, pattern.flags + 'g')))
       if (matches.length > 1) { // 至少要有2个章节才认为分割有效
         chapterSplits = matches.map(match => ({
           index: match.index || 0,
@@ -201,15 +204,29 @@ export class TXTParser implements FileParser {
     
     // 如果没有找到章节分割，将整个文本作为一章
     if (chapterSplits.length === 0) {
+      const cleanContent = this.normalizeChapterContent(normalizedContent)
       chapters.push({
         title: '正文',
-        content: content.trim(),
+        content: cleanContent,
         order: 1,
-        wordCount: this.countWords(content),
+        wordCount: this.countWords(cleanContent),
         startLocation: '0',
-        endLocation: content.length.toString()
+        endLocation: cleanContent.length.toString()
       })
       return chapters
+    }
+
+    const firstChapterIndex = chapterSplits[0]?.index ?? 0
+    const prefaceContent = this.normalizeChapterContent(normalizedContent.slice(0, firstChapterIndex))
+    if (prefaceContent.length > 120) {
+      chapters.push({
+        title: '前言',
+        content: prefaceContent,
+        order: 1,
+        wordCount: this.countWords(prefaceContent),
+        startLocation: '0',
+        endLocation: firstChapterIndex.toString()
+      })
     }
     
     // 根据分割点创建章节
@@ -218,15 +235,16 @@ export class TXTParser implements FileParser {
       const nextSplit = chapterSplits[i + 1]
       
       const startIndex = currentSplit.index
-      const endIndex = nextSplit ? nextSplit.index : content.length
+      const endIndex = nextSplit ? nextSplit.index : normalizedContent.length
       
-      const chapterContent = content.substring(startIndex, endIndex).trim()
+      const rawChapterContent = normalizedContent.substring(startIndex, endIndex).trim()
+      const chapterContent = this.normalizeChapterContent(rawChapterContent, currentSplit.title)
       
       if (chapterContent.length > 0) {
         chapters.push({
           title: this.cleanChapterTitle(currentSplit.title),
           content: chapterContent,
-          order: i + 1,
+          order: chapters.length + 1,
           wordCount: this.countWords(chapterContent),
           startLocation: startIndex.toString(),
           endLocation: endIndex.toString()
@@ -242,6 +260,69 @@ export class TXTParser implements FileParser {
    */
   private cleanChapterTitle(title: string): string {
     return title.replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' ')
+  }
+
+  private normalizeSourceText(text: string): string {
+    return text
+      .replace(/^\uFEFF/, '')
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n')
+      .replace(/\u00a0/g, ' ')
+      .replace(/[ \t]+\n/g, '\n')
+      .replace(/\n{4,}/g, '\n\n\n')
+      .trim()
+  }
+
+  private normalizeChapterContent(content: string, chapterTitle?: string): string {
+    const lines = content
+      .split('\n')
+      .map((line) => line.replace(/\t/g, '  ').trim())
+
+    const paragraphs: string[] = []
+    let currentParagraph: string[] = []
+
+    for (const line of lines) {
+      if (!line) {
+        if (currentParagraph.length > 0) {
+          paragraphs.push(currentParagraph.join(''))
+          currentParagraph = []
+        }
+        continue
+      }
+
+      if (chapterTitle && paragraphs.length === 0 && currentParagraph.length === 0 && line === this.cleanChapterTitle(chapterTitle)) {
+        continue
+      }
+
+      if (this.looksLikeStandaloneHeading(line)) {
+        if (currentParagraph.length > 0) {
+          paragraphs.push(currentParagraph.join(''))
+          currentParagraph = []
+        }
+        paragraphs.push(line)
+        continue
+      }
+
+      currentParagraph.push(currentParagraph.length === 0 ? `  ${line}` : line)
+    }
+
+    if (currentParagraph.length > 0) {
+      paragraphs.push(currentParagraph.join(''))
+    }
+
+    return paragraphs.join('\n\n').trim()
+  }
+
+  private looksLikeStandaloneHeading(line: string): boolean {
+    if (line.length > 40) {
+      return false
+    }
+
+    return [
+      /^\s*第[零一二三四五六七八九十百千万两\d]+[章节回部卷篇集]\s*[^\n]{0,25}$/,
+      /^\s*(序章|楔子|前言|引言|后记|尾声|番外)\s*[^\n]{0,25}$/,
+      /^\s*Chapter\s+\d+[\s.:：-]*[^\n]{0,25}$/i
+    ].some((pattern) => pattern.test(line))
   }
 
   /**

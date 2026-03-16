@@ -54,12 +54,12 @@ function Layout({ children }: LayoutProps): JSX.Element {
   ]
 
   return (
-    <div className="h-screen flex overflow-hidden bg-gray-100">
+    <div className="flex min-h-screen overflow-hidden bg-gray-100">
       {/* 移动端侧边栏遮罩 */}
       {sidebarOpen && (
-        <div className="fixed inset-0 flex z-40 md:hidden">
+        <div className="fixed inset-0 z-40 flex md:hidden">
           <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
-          <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
+          <div className="relative flex h-full w-full max-w-[18rem] flex-1 flex-col bg-white shadow-xl">
             <div className="absolute top-0 right-0 -mr-12 pt-2">
               <button
                 className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
@@ -87,11 +87,11 @@ function Layout({ children }: LayoutProps): JSX.Element {
       </div>
 
       {/* 主内容区域 */}
-      <div className="flex flex-col w-0 flex-1 overflow-hidden">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         {/* 顶部导航栏 */}
-        <div className="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
+        <div className="sticky top-0 z-30 border-b border-gray-200 bg-white/90 px-3 py-3 backdrop-blur md:hidden">
           <button
-            className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-md text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
             onClick={() => setSidebarOpen(true)}
           >
             <Menu className="h-6 w-6" />
@@ -99,7 +99,7 @@ function Layout({ children }: LayoutProps): JSX.Element {
         </div>
 
         {/* 页面内容 */}
-        <main className="flex-1 relative overflow-y-auto focus:outline-none">
+        <main className="relative flex-1 overflow-y-auto focus:outline-none">
           {children}
         </main>
       </div>
@@ -122,15 +122,15 @@ interface SidebarContentProps {
 
 function SidebarContent({ navigation, onLogout }: SidebarContentProps): JSX.Element {
   return (
-    <div className="flex flex-col h-0 flex-1 border-r border-gray-200 bg-white">
+    <div className="flex h-full min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
       {/* Logo */}
-      <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-        <div className="flex items-center flex-shrink-0 px-4">
-          <h1 className="text-2xl font-bold text-gray-900">Anagnosis</h1>
+      <div className="flex flex-1 flex-col overflow-y-auto px-3 pb-4 pt-5">
+        <div className="flex flex-shrink-0 items-center px-2">
+          <h1 className="text-[clamp(1.5rem,2vw,1.9rem)] font-bold tracking-tight text-gray-900">Anagnosis</h1>
         </div>
         
         {/* 导航菜单 */}
-        <nav className="mt-5 flex-1 px-2 space-y-1">
+        <nav className="mt-5 flex-1 space-y-1">
           {navigation.map((item) => {
             const Icon = item.icon
             return (
@@ -138,7 +138,7 @@ function SidebarContent({ navigation, onLogout }: SidebarContentProps): JSX.Elem
                 key={item.name}
                 to={item.href}
                 className={`
-                  group flex items-center px-2 py-2 text-sm font-medium rounded-md
+                  group flex items-center rounded-md px-3 py-2.5 text-sm font-medium transition-colors
                   ${
                     item.current
                       ? 'bg-gray-100 text-gray-900'
@@ -164,7 +164,7 @@ function SidebarContent({ navigation, onLogout }: SidebarContentProps): JSX.Elem
       </div>
       
       {/* 底部登出按钮 */}
-      <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
+      <div className="flex flex-shrink-0 border-t border-gray-200 p-4">
         <button
           onClick={onLogout}
           className="flex-shrink-0 w-full group block"
